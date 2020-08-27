@@ -1,0 +1,5 @@
+
+User-Agent: *
+Allow: *
+
+Sitemap: https://fodmaps.dbr.io/sitemap.xml
