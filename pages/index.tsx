@@ -225,6 +225,7 @@ const Index = ({ cards }) => {
                                     )
                                     .map((item) => (
                                         <ListItem
+                                            button
                                             key={`item-${category}-${item.limited}-${item.name}`}
                                             style={{
                                                 backgroundColor: calcConsumtionColor(

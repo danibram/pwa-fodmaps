@@ -8,14 +8,15 @@ import {
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import { fade } from "@material-ui/core/styles";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import BookmarksIcon from "@material-ui/icons/Bookmarks";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import RestoreIcon from "@material-ui/icons/Home";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import React from "react";
 import { withA2HS } from "../Providers/a2hs";
-
 const useStyles = makeStyles((theme) => ({
     root: {
         position: "fixed",
@@ -86,6 +87,9 @@ const useStyles = makeStyles((theme) => ({
     hide: {
         display: "none",
     },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
 }));
 
 const Layout = ({
@@ -94,6 +98,7 @@ const Layout = ({
     isAppInstallable,
     isAppInstalled,
     deferredPrompt,
+    back = null,
 }) => {
     const classes = useStyles();
     const router = useRouter();
@@ -108,6 +113,17 @@ const Layout = ({
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar>
+                    {back ? (
+                        <IconButton
+                            edge="start"
+                            className={classes.menuButton}
+                            color="inherit"
+                            aria-label="menu"
+                            onClick={back}
+                        >
+                            <ArrowBackIcon />
+                        </IconButton>
+                    ) : null}
                     <Typography className={classes.title} variant="h6">
                         FODMAPs
                     </Typography>
@@ -141,6 +157,11 @@ const Layout = ({
                     label="Categorias"
                     value="/categorias"
                     icon={<BookmarksIcon />}
+                />
+                <BottomNavigationAction
+                    label="Autores"
+                    value="/autores"
+                    icon={<HelpOutlineIcon />}
                 />
             </BottomNavigation>
         </div>

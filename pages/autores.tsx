@@ -1,12 +1,8 @@
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React from "react";
-import useSWR from "swr";
 import Layout from "../src/components/Layout";
-import Loader from "../src/components/Loader";
-import { getCards, sanitizeStr } from "../src/utils";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,67 +78,14 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const withCards = (Component: any) => (props) => {
-    const router = useRouter();
-
-    const { data, revalidate } = useSWR("cards", getCards);
-
-    if (!data) {
-        return <Loader />;
-    }
-
-    return <Component {...props} cards={data} />;
-};
-
-const Index = ({ cards }) => {
+const Category = () => {
     const classes = useStyles();
-    const router = useRouter();
-    const [hideBottom, setHideBottom] = React.useState(false);
-    const [cardsFiltered, setCardFiltered] = React.useState(cards.foods);
-    const [categoriesFiltered, setCategories] = React.useState(
-        cards.categories
-    );
-    const [filter, setFilter] = React.useState("");
-
-    const handleChange = (event) => {
-        setFilter(event.target.value);
-        if (event.target.value === "") {
-            setCardFiltered(cards.foods);
-            setCategories(cards.categories);
-        } else {
-            let filteredFoods = cards.foods.filter(
-                (o) =>
-                    sanitizeStr(o.name).indexOf(
-                        event.target.value.toLowerCase()
-                    ) > -1
-            );
-            setCardFiltered(filteredFoods);
-            setCategories(
-                Array.from(
-                    new Set(filteredFoods.map(({ category }) => category))
-                )
-            );
-        }
-    };
-
-    const handleBlur = () => {
-        console.log("handleBlur");
-        setHideBottom(false);
-    };
-
-    const handleFocus = (event) => {
-        console.log("handleFocus");
-        setHideBottom(true);
-    };
 
     return (
         <>
             <Head>
-                <title>FODMAPs: Guia rapida de alimentos</title>
-                <meta
-                    name="description"
-                    content="FODMAPs guia rapida de alimentos"
-                />
+                <title>FODMAPs: Sobre la PWA</title>
+                <meta name="description" content="FODMAPs Sobre la PWA" />
             </Head>
             <Layout>
                 <Grid
@@ -174,4 +117,4 @@ const Index = ({ cards }) => {
     );
 };
 
-export default withCards(Index);
+export default Category;
