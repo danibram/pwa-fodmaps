@@ -15,6 +15,7 @@ import InputBase from "@material-ui/core/InputBase";
 import Slide from "@material-ui/core/Slide";
 import SearchIcon from "@material-ui/icons/Search";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
@@ -112,11 +113,26 @@ export const withCards = (Component: any) => (props) => {
 
     const { data, revalidate } = useSWR("cards", getCards);
 
-    if (!data) {
+    if (data) {
+        localStorage.setItem("cards", JSON.stringify(data));
+        localStorage.setItem("lastSync", JSON.stringify(dayjs().valueOf()));
+
+        return <Component {...props} cards={data} />;
+    }
+
+    let localCards = localStorage.getItem("cards");
+
+    try {
+        localCards = JSON.parse(localCards);
+    } catch (e) {
+        localCards = null;
+    }
+
+    if (!localCards && !data) {
         return <Loader />;
     }
 
-    return <Component {...props} cards={data} />;
+    return <Component {...props} cards={localCards} />;
 };
 
 const Index = ({ cards }) => {
