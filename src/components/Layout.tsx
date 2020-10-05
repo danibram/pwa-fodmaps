@@ -109,6 +109,9 @@ const Layout = ({
         setValue(newValue);
     };
 
+    let basePath = value.split("/");
+    basePath.shift();
+
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -142,7 +145,7 @@ const Layout = ({
             </AppBar>
             {children}
             <BottomNavigation
-                value={value}
+                value={basePath.length > 0 ? `/${basePath[0]}` : value}
                 onChange={handleChange}
                 className={clsx(classes.nav, {
                     [classes.hide]: hideBottom,
