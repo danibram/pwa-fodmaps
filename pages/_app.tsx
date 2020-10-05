@@ -78,6 +78,14 @@ export default function MyApp(props: AppProps) {
             window.workbox.addEventListener("activated", (event) => {
                 console.log(`Event ${event.type} is triggered.`);
                 console.log(event);
+
+                if (!event.isUpdate) {
+                    caches.keys().then(function (c) {
+                        if (!c.includes("start-url")) {
+                            fetch(__PWA_START_URL__);
+                        }
+                    });
+                }
             });
 
             registration = await window.workbox.register();
