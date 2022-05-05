@@ -1,4 +1,4 @@
-FROM node:12-alpine AS base
+FROM node:14-alpine AS base
 
 WORKDIR /src
 
@@ -13,7 +13,7 @@ RUN npm run build
 RUN npm prune --production --no-audit
 RUN rm -rf .next/cache
 
-FROM node:12-alpine
+FROM node:14-alpine
 
 WORKDIR /usr/app
 
@@ -25,6 +25,6 @@ COPY --from=build /src/public /usr/app/public
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm i next
 
-ENV PORT 3002
+ENV PORT 3003
 EXPOSE $PORT
 CMD npm start -- -p $PORT
