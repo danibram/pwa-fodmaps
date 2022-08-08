@@ -16,7 +16,7 @@ import RestoreIcon from "@material-ui/icons/Home";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import React from "react";
-import { withA2HS } from "../Providers/a2hs";
+import { withA2HS } from "../hocs/a2hs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,9 +92,6 @@ const useStyles = makeStyles((theme) => ({
   },
   hide: {
     display: "none",
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
   },
   headerTitle: {
     display: "flex",

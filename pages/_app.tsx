@@ -1,24 +1,14 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { MDXProvider } from "@mdx-js/tag";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Router from "next/router";
-import React, { useEffect } from "react";
-import "../src/helpers/md.css";
-import mdComponents from "../src/helpers/mdMui";
+import { useEffect } from "react";
 import * as gtag from "../src/lib/gtag";
 import theme from "../src/theme";
 
-// const CookieConsent: any = dynamic(
-//     () => import("../src/components/CookieConsent"),
-//     {
-//         ssr: false,
-//     }
-// );
-
-const A2HSProvider: any = dynamic(() => import("../src/Providers/a2hs"), {
+const A2HSProvider: any = dynamic(() => import("../src/hocs/a2hs"), {
   ssr: false,
 });
 
@@ -35,8 +25,8 @@ export default function MyApp(props: AppProps) {
   let { Component, pageProps } = props;
 
   useEffect(() => {
-    const registerWB = async () => {
-      let registration;
+    const registerWB = async (w) => {
+      const wb = w.workbox as any;
 
       const showSkipWaitingPrompt = function (event) {
         if (
@@ -44,81 +34,40 @@ export default function MyApp(props: AppProps) {
             "Nueva versión de la página en marcha. ¡No esperes más a actualizarla!"
           )
         ) {
-          window.workbox.addEventListener("controlling", (event) => {
+          wb.addEventListener("controlling", (event) => {
             window.location.reload();
           });
-          window.workbox.messageSW({ type: "SKIP_WAITING" });
+          wb.messageSW({ type: "SKIP_WAITING" });
         }
       };
 
-      window.workbox.addEventListener("waiting", showSkipWaitingPrompt);
-      window.workbox.addEventListener("externalwaiting", showSkipWaitingPrompt);
+      wb.addEventListener("waiting", showSkipWaitingPrompt);
+      wb.addEventListener("externalwaiting", showSkipWaitingPrompt);
 
-      window.workbox.addEventListener("message", (event) => {
+      wb.addEventListener("message", (event) => {
         console.log(`Event ${event.type} is triggered.`);
         console.log(event);
         if (event.data && event.data.type === "SKIP_WAITING") {
-          skipWaiting();
+          wb.messageSkipWaiting();
         }
       });
-      window.workbox.addEventListener("installed", (event) => {
+      wb.addEventListener("installed", (event) => {
         console.log(`Event ${event.type} is triggered.`);
         console.log(event);
       });
 
-      window.workbox.addEventListener("controlling", (event) => {
+      wb.addEventListener("controlling", (event) => {
         console.log(`Event ${event.type} is triggered.`);
         console.log(event);
       });
 
-      window.workbox.addEventListener("activated", (event) => {
+      wb.addEventListener("activated", (event) => {
         console.log(`Event ${event.type} is triggered.`);
         console.log(event);
-
-        if (!event.isUpdate) {
-          caches.keys().then(function (c) {
-            if (!c.includes("start-url")) {
-              fetch(__PWA_START_URL__);
-            }
-          });
-        }
       });
 
-      // window.workbox.addEventListener("fetch", function (event) {
-      //     const {
-      //         request,
-      //         request: { url, method },
-      //     } = event;
-      //     if (event.request.url.startsWith(self.location.origin)) {
-      //         event.respondWith(
-      //             caches
-      //                 .match(event.request)
-      //                 .catch(function (error) {
-      //                     return;
-      //                 })
-      //                 .then(function (res) {
-      //                     if (
-      //                         event.request.method == "POST" &&
-      //                         !navigator.onLine
-      //                     ) {
-      //                         //Prevent POST since they give errors.
-      //                         if (res != "undefined") {
-      //                             return res;
-      //                         }
-      //                         return fetch(event.request);
-      //                     } else {
-      //                         return fetchAndUpdate(event.request);
-      //                     }
-      //                 })
-      //         );
-      //     } else {
-      //         return;
-      //     }
-      // });
-
-      registration = await window.workbox.register();
+      await wb.register();
     };
-
     // // Detects if device is on iOS
     // const isIos = () => {
     //     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -144,7 +93,7 @@ export default function MyApp(props: AppProps) {
       "serviceWorker" in navigator &&
       window.workbox !== undefined
     ) {
-      registerWB();
+      registerWB(window);
     }
 
     const handleRouteChange = (url) => {
@@ -265,21 +214,7 @@ export default function MyApp(props: AppProps) {
       <A2HSProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <MDXProvider components={mdComponents}>
-            <Component {...pageProps} />
-          </MDXProvider>
-          {/*<CookieConsent
-                        location="bottom"
-                        buttonText="Acepto"
-                        cookieName="consentimiento-cookies"
-                        style={{ background: '#2B373B' }}
-                        buttonStyle={{ color: '#4e503b', fontSize: '13px' }}
-                        onAccept={() => console.log('Accepted')}
-                        expires={150}
-                    >
-                        Esta web utiliza cookies. Debes aceptar para continuar.{' '}
-                        <a href="/informacion-legal">+ info</a>
-                    </CookieConsent>*/}
+          <Component {...pageProps} />
         </ThemeProvider>
       </A2HSProvider>
     </>

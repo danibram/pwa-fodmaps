@@ -10,10 +10,9 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import clsx from "clsx";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React from "react";
-import { withCards } from "..";
 import Layout from "../../src/components/Layout";
-import { firstLetterUpper } from "../../src/utils";
+import { withCards } from "../../src/hocs/withCards";
+import { firstLetterUpper } from "../../src/lib/utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,8 +95,8 @@ const Index = ({ cards }) => {
   return (
     <>
       <Head>
-        <title>FODMAPs: Guia rapida de alimentos</title>
-        <meta name="description" content="FODMAPs guia rapida de alimentos" />
+        <title>FODMAPs: Guia por categorias</title>
+        <meta name="description" content="FODMAPs guia por categorias" />
       </Head>
       <Layout>
         <List className={clsx(classes.root)} subheader={<li />}>
