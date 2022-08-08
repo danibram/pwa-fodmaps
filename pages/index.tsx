@@ -17,20 +17,17 @@ import Slide from "@material-ui/core/Slide";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import SearchIcon from "@material-ui/icons/Search";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
 import Highlighter from "react-highlight-words";
-import useSWR from "swr";
 import Layout from "../src/components/Layout";
-import Loader from "../src/components/Loader";
+import { withCards } from "../src/hocs/withCards";
 import {
   calcConsumtionColor,
   firstLetterUpper,
-  getCards,
   sanitizeStr,
-} from "../src/utils";
+} from "../src/lib/utils";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -109,33 +106,6 @@ const useStyles = makeStyles((theme) => ({
   },
   exclamation: { marginLeft: theme.spacing(2), color: "gray" },
 }));
-
-export const withCards = (Component: any) => (props) => {
-  const router = useRouter();
-
-  const { data, revalidate } = useSWR("cards", getCards);
-
-  if (data) {
-    localStorage.setItem("cards", JSON.stringify(data));
-    localStorage.setItem("lastSync", JSON.stringify(dayjs().valueOf()));
-
-    return <Component {...props} cards={data} />;
-  }
-
-  let localCards = localStorage.getItem("cards");
-
-  try {
-    localCards = JSON.parse(localCards);
-  } catch (e) {
-    localCards = null;
-  }
-
-  if (!localCards && !data) {
-    return <Loader />;
-  }
-
-  return <Component {...props} cards={localCards} />;
-};
 
 const Index = ({ cards }) => {
   const classes = useStyles();
